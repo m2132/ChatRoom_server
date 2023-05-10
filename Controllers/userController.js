@@ -1,5 +1,5 @@
 import userContext from "../Contexts/userContext.js";
-import multer from 'multer';
+// import multer from 'multer';
 
 import mail from "../mail/mail.js";
 
@@ -78,13 +78,12 @@ const UserController = {
       if (!user) {
         return res.status(404).send({ error: 'User not found' });
       }
-   
       if (!req.file) {
         return res.status(400).send({ error: 'Please upload a file' });
       }
   
       user.profilePicture = {
-        data: req.file.buffer,
+        data: req.file.filename,
         contentType: req.file.mimetype,
       };
   

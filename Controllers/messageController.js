@@ -1,4 +1,5 @@
 import messageContext from "../Contexts/messageContext.js";
+import socketioServer from "../socketioServer.js";
 
 const MessageController = {
   getList: async (req, res) => {
@@ -12,33 +13,20 @@ const MessageController = {
   },
 
   addMessage: async (req, res) => {
-    // try {
-      const { user, room, text, type } = req.body;
-      const newMessage = await messageContext.addMessage({
-        user,
-        room,
-        text,
-        type,
-      });
-      res.send(newMessage);
-    // } catch (error) {
-    //   res.status(400).send({ message: error.message });
-    // }
+    const { user, room, text, type } = req.body;
+    const newMessage = await messageContext.addMessage({ user, room, text, type });
+    // Emit a message event to all clients in the room
+    socketioServer.to(room).emit('message', newMessage);
+    res.send(newMessage);
   },
 
   update: async (req, res) => {
     const { id } = req.params;
     const { text, type, status } = req.body;
-    try {
-      const updatedMessage = await messageContext.updateMessage(id, {
-        text,
-        type,
-        status,
-      });
-      res.send(updatedMessage);
-    } catch (error) {
-      res.status(400).send({ message: error.message });
-    }
+    const updatedMessage = await messageContext.updateMessage(id, { text, type, status });
+    // Emit a message event to all clients in the room
+    socketioServer.to(updatedMessage.room).emit('message', updatedMessage);
+    res.send(updatedMessage);
   },
 
   delete: async (req, res) => {

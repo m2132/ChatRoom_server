@@ -1,7 +1,9 @@
 import express from "express";
 import multer from "multer";
 import userController from "../Controllers/userController.js";
+
 const router = express.Router();
+
 const upload = multer({
   dest: "uploads/",
   limits: {
@@ -21,7 +23,7 @@ router.delete("/:id", userController.delete);
 
 router.post(
   "/uploadProfilePicture/:id",
-  upload.single("file"),
+  upload.single("profilePicture"),
   userController.uploadProfilePicture
 );
 
